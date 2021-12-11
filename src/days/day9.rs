@@ -62,9 +62,8 @@ impl Day for Day9 {
                 basins.push(dsu.size(idx(i, j)) as u64);
             }
         }}
-
-        let num_basins = basins.len();
-        basins.select_nth_unstable(num_basins - 3);
+        
+        basins.sort_unstable();
         basins.iter().rev().take(3).product()
     }
 }

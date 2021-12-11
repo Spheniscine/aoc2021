@@ -87,8 +87,8 @@ impl Day for Day10 {
 
     fn part2(data: Self::Parsed) -> Self::Output2 {
         let mut scores = data.iter().filter_map(|tokens| incomplete_score(tokens)).collect::<Vec<_>>();
-        let n = scores.len();
-        *scores.select_nth_unstable(n/2).1
+        scores.sort_unstable();
+        scores[scores.len() / 2]
     }
 }
 
