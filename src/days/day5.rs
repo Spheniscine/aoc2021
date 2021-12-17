@@ -67,23 +67,23 @@ impl Day for Day5 {
 #[cfg(test)]
 mod tests {
     use crate::aoc_base::InputSource;
-
+    use indoc::indoc;
     use super::*;
 
     #[test]
     fn test_input() {
-        let inp = r#"
-0,9 -> 5,9
-8,0 -> 0,8
-9,4 -> 3,4
-2,2 -> 2,1
-7,0 -> 7,4
-6,4 -> 2,0
-0,9 -> 2,9
-3,4 -> 1,4
-0,0 -> 8,8
-5,5 -> 8,2
-        "#.trim();
+        let inp = indoc! {"
+            0,9 -> 5,9
+            8,0 -> 0,8
+            9,4 -> 3,4
+            2,2 -> 2,1
+            7,0 -> 7,4
+            6,4 -> 2,0
+            0,9 -> 2,9
+            3,4 -> 1,4
+            0,0 -> 8,8
+            5,5 -> 8,2
+        "};
         Day5::test(InputSource::Literal(inp), Some(5), Some(12));
     }
 

@@ -1,8 +1,8 @@
 use crate::aoc_base::Day;
 
-pub struct DayNUM;
+pub struct Day17;
 
-impl Day for DayNUM {
+impl Day for Day17 {
     type Parsed = ();
 
     type Output1 = &'static str;
@@ -10,7 +10,7 @@ impl Day for DayNUM {
     type Output2 = &'static str;
 
     fn num() -> usize {
-        NUM
+        17
     }
 
     fn title() -> &'static str {
@@ -36,6 +36,6 @@ mod tests {
 
     #[test]
     fn gmail() {
-        //DayNUM::test(InputSource::gmail(NUM), Some(1553), Some(1597))
+        //Day17::test(InputSource::gmail(17), Some(1553), Some(1597))
     }
 }

@@ -1,8 +1,8 @@
-use std::{fmt::Debug};
+use std::{fmt::{Display, Debug}};
 pub trait Day {
     type Parsed: Clone;
-    type Output1: Debug + PartialEq;
-    type Output2: Debug + PartialEq;
+    type Output1: Display + Debug + PartialEq;
+    type Output2: Display + Debug + PartialEq;
 
     fn num() -> usize;
     fn title() -> &'static str;
@@ -24,12 +24,12 @@ pub trait Day {
         println!();
         println!("Part 1:");
         let output1 = Self::part1(parsed.clone());
-        println!("{:?}", output1);
+        println!("{}", output1);
 
         println!();
         println!("Part 2:");
         let output2 = Self::part2(parsed.clone());
-        println!("{:?}", output2);
+        println!("{}", output2);
     }
 
     #[cfg(test)]

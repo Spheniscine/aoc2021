@@ -33,7 +33,6 @@ impl Day for Day1 {
 #[cfg(test)]
 mod tests {
     use crate::aoc_base::InputSource;
-
     use super::*;
 
     #[test]
