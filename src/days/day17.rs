@@ -22,7 +22,7 @@ impl Day for Day17 {
     }
 
     fn parse(input: &str) -> Self::Parsed {
-        let re = Regex::new(r"^target area: x=(.+?)\.\.(.+?), y=(.+?)\.\.(.+?)$").unwrap();
+        let re = Regex::new(r"^target area: x=(.+)\.\.(.+), y=(.+)\.\.(.+)$").unwrap();
         let cap = re.captures(input).unwrap();
         [ cap[1].parse().unwrap() ..= cap[2].parse().unwrap(), cap[3].parse().unwrap() ..= cap[4].parse().unwrap() ]
     }
