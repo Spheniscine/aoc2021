@@ -1,6 +1,4 @@
-use std::collections::VecDeque;
-
-use indexmap::IndexSet;
+use std::collections::HashSet;
 use regex::Regex;
 
 use crate::aoc_base::Day;
@@ -25,75 +23,124 @@ fn _rots_gen() {
     println!("{:?}", &q);
 }
 
-fn rotate_points(rot: Rot, pts: &[[i64; 3]]) -> Vec<[i64; 3]> {
-    pts.iter().map(|&pt| {
+type Pt = crate::util::pt::Pt<3>;
+impl Pt {
+    fn rotate(self, rot: Rot) -> Pt {
         let mut ans = [0; 3];
         for i in 0..3 {
-            ans[rot[i].0] = pt[i] * rot[i].1 as i64;
+            ans[rot[i].0] = self[i] * rot[i].1 as i64;
         }
-        ans
-    }).collect()
+        ans.into()
+    }
+    fn transform(self, tr: Transform) -> Pt {
+        self.rotate(tr.0) + tr.1
+    }
 }
 
+type Transform = (Rot, Pt);
+fn compose(f: Transform, g: Transform) -> Transform {
+    let mut rot = Rot::default();
+    for i in 0..3 {
+        let a = f.0[i];
+        let b = g.0[a.0];
+        rot[i] = (b.0, a.1 * b.1)
+    }
+    (rot, f.1.transform(g))
+}
+
+fn rotate_points(pts: &[Pt], rot: Rot) -> Vec<Pt> {
+    pts.iter().map(|x| x.rotate(rot)).collect()
+}
+
+fn find_transform(a: &[Pt], b: &[Pt]) -> Option<Transform> {
+    let s = b.iter().copied().collect::<HashSet<_>>();
+    
+    for rot in ROTS {
+        let a = rotate_points(a, rot);
+        for &pa in &a { for &pb in b {
+            let shift = pb - pa;
+            if a.iter().map(|&x| x + shift).filter(|&x| s.contains(&x)).nth(11).is_some() {
+                return Some((rot, shift));
+            }
+        }}
+    }
+
+    None
+}
+
+fn find_scanners(data: &Data) -> Vec<Transform> {
+    let n = data.len();
+
+    let mut ans = vec![(ROTS[0], Pt::default()); n];
+    let mut vis = vec![false; n];
+    let mut stk = vec![0];
+    vis[0] = true;
+
+    while let Some(u) = stk.pop() {
+        for v in 0..n { if !vis[v] {
+            if let Some(t) = find_transform(&data[v], &data[u]) {
+                vis[v] = true;
+                ans[v] = compose(t, ans[u]);
+                stk.push(v);
+            }
+        }}
+    }
+
+    assert!(vis.iter().all(|&x| x));
+    ans
+}
+
+type Data = Vec<Vec<Pt>>;
 
 impl Day for Day19 {
-    type Parsed = Vec<Vec<[i64; 3]>>;
+    type Parsed = (Data, Vec<Transform>);
 
     type Output1 = usize;
 
-    type Output2 = &'static str;
+    type Output2 = i64;
 
     fn num() -> usize {
         19
     }
 
     fn title() -> &'static str {
-        ""
+        "Beacon Scanner"
     }
 
     fn parse(input: &str) -> Self::Parsed {
         let re = Regex::new(r"\s*--- scanner \d+ ---\s*").unwrap();
-        re.split(input).skip(1).map(|section|
+        let data = re.split(input).skip(1).map(|section|
             section.lines().map(|ln| {
                 let mut it = ln.split(',').map(|v| v.parse().unwrap());
-                [it.next().unwrap(), it.next().unwrap(), it.next().unwrap()]
+                [it.next().unwrap(), it.next().unwrap(), it.next().unwrap()].into()
             }).collect()
-        ).collect()
+        ).collect();
+        let transforms = find_scanners(&data);
+        (data, transforms)
     }
 
     fn part1(data: Self::Parsed) -> Self::Output1 {
-        let mut points = IndexSet::<[i64; 3]>::new();
-        points.extend(&data[0]);
-
-        let mut rem = (1..data.len()).collect::<VecDeque<_>>();
-        'combine: while let Some(i) = rem.pop_front() {
-            let curr = points.iter().copied().collect::<Vec<_>>();
-            for rot in ROTS {
-                let scanner = rotate_points(rot, &data[i]);
-                for a in &curr { for b in &scanner {
-                    let new = scanner.iter().map(|&pt| {
-                        let mut ans = [0; 3];
-                        for i in 0..3 {
-                            ans[i] = pt[i] - b[i] + a[i];
-                        }
-                        ans
-                    }).collect::<Vec<_>>();
-                    if new.iter().filter(|&&pt| points.contains(&pt)).count() >= 12 {
-                        points.extend(new);
-                        continue 'combine;
-                    }
-                }}
-            }
-
-            rem.push_back(i);
-            dbg!(i);
+        let (data, transforms) = data;
+        
+        let mut beacons = HashSet::new();
+        for i in 0..data.len() {
+            beacons.extend(data[i].iter().map(|&x| x.transform(transforms[i])));
         }
 
-        points.len()
+        beacons.len()
     }
 
     fn part2(data: Self::Parsed) -> Self::Output2 {
-        "TODO"
+        let (data, transforms) = data;
+
+        let mut ans = 0i64;
+        for i in 0..data.len() {
+            for j in 0..i {
+                ans = ans.max((transforms[i].1 - transforms[j].1).manhattan_distance())
+            }
+        }
+
+        ans
     }
 }
 
@@ -105,12 +152,12 @@ mod tests {
 
     #[test]
     fn test_input() {
-        Day19::test(InputSource::Literal(TEST_INPUT), Some(79), None);
+        Day19::test(InputSource::Literal(TEST_INPUT), Some(79), Some(3621));
     }
 
     #[test]
     fn gmail() {
-        Day19::test(InputSource::gmail(19), Some(428), None)
+        Day19::test(InputSource::gmail(19), Some(428), Some(12140))
     }
 
     const TEST_INPUT: &str = indoc!{"
