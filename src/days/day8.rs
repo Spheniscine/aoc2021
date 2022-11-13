@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use shash::SHashMap;
 
 use crate::aoc_base::Day;
 use crate::util::permutations::Permutations;
@@ -67,7 +67,7 @@ impl Day for Day8 {
 
     fn part2(data: Self::Parsed) -> Self::Output2 {
         let mut perms = Permutations::full(7);
-        let mut map = HashMap::new();
+        let mut map = SHashMap::default();
         while let Some(p) = perms.next() {
             let trans = ORTH.map(|x| {
                 let mut y = 0u8;

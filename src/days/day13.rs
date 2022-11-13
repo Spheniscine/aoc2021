@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use shash::SHashSet;
 
 use crate::{aoc_base::Day, util::display_dots::display_dots};
 
@@ -10,11 +10,11 @@ type Instruction = (FoldKind, i32);
 
 #[derive(Debug, Clone)]
 pub struct Data {
-    dots: HashSet<[i32; 2]>,
+    dots: SHashSet<[i32; 2]>,
     instructions: Vec<Instruction>
 }
 
-fn do_fold(dots: &HashSet<[i32; 2]>, instruction: Instruction) -> HashSet<[i32; 2]> {
+fn do_fold(dots: &SHashSet<[i32; 2]>, instruction: Instruction) -> SHashSet<[i32; 2]> {
     let dim: usize = if instruction.0 == FoldKind::X { 0 } else { 1 };
 
     dots.iter().map(|dot| {

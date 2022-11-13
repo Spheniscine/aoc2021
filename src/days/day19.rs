@@ -1,5 +1,5 @@
-use std::collections::HashSet;
 use regex::Regex;
+use shash::SHashSet;
 
 use crate::aoc_base::Day;
 
@@ -53,7 +53,7 @@ fn rotate_points(pts: &[Pt], rot: Rot) -> Vec<Pt> {
 }
 
 fn find_transform(a: &[Pt], b: &[Pt]) -> Option<Transform> {
-    let s = b.iter().copied().collect::<HashSet<_>>();
+    let s = b.iter().copied().collect::<SHashSet<_>>();
     
     for rot in ROTS {
         let a = rotate_points(a, rot);
@@ -122,7 +122,7 @@ impl Day for Day19 {
     fn part1(data: Self::Parsed) -> Self::Output1 {
         let (data, transforms) = data;
         
-        let mut beacons = HashSet::new();
+        let mut beacons = SHashSet::default();
         for i in 0..data.len() {
             beacons.extend(data[i].iter().map(|&x| x.transform(transforms[i])));
         }

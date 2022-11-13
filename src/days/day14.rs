@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use shash::SHashMap;
 
 use crate::{aoc_base::Day};
 
@@ -10,11 +10,11 @@ pub struct Data {
     rules: Rules
 }
 
-type Counts = HashMap<[u8; 2], u64>;
-type Rules = HashMap<[u8; 2], u8>;
+type Counts = SHashMap<[u8; 2], u64>;
+type Rules = SHashMap<[u8; 2], u8>;
 
 fn step(counts: &Counts, rules: &Rules) -> Counts {
-    let mut res = Counts::new();
+    let mut res = Counts::default();
 
     for (&pair, &num) in counts {
         if let Some(&mid) = rules.get(&pair) {
@@ -45,7 +45,7 @@ fn get_answer(counts: &Counts, template: &[u8]) -> u64 {
 
 impl Data {
     fn get_counts(&self) -> Counts {
-        let mut res = Counts::new();
+        let mut res = Counts::default();
 
         for win in self.template.windows(2) {
             *res.entry([win[0], win[1]]).or_insert(0) += 1;

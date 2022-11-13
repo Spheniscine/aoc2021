@@ -1,6 +1,6 @@
-use std::collections::HashSet;
+use shash::SHashSet;
 
-pub fn display_dots(dots: &HashSet<[i32; 2]>) -> String {
+pub fn display_dots(dots: &SHashSet<[i32; 2]>) -> String {
     if dots.is_empty() { return String::new(); }
     let mut res = String::new();
     let xmin = dots.iter().map(|p| p[0]).min().unwrap();

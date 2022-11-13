@@ -1,4 +1,6 @@
-use std::{collections::HashMap, cmp::{min, max}};
+use std::cmp::{min, max};
+
+use shash::SHashMap;
 
 use crate::aoc_base::Day;
 
@@ -33,7 +35,7 @@ impl Day for Day5 {
     }
 
     fn part1(data: Self::Parsed) -> Self::Output1 {
-        let mut cnt = HashMap::new();
+        let mut cnt = SHashMap::default();
         for &[[x1, y1], [x2, y2]] in &data {
             if x1 == x2 {
                 for y in min(y1, y2)..=max(y1, y2) {
@@ -50,7 +52,7 @@ impl Day for Day5 {
     }
 
     fn part2(data: Self::Parsed) -> Self::Output2 {
-        let mut cnt = HashMap::new();
+        let mut cnt = SHashMap::default();
         for &[[mut x, mut y], [x2, y2]] in &data {
             loop {
                 *cnt.entry([x, y]).or_insert(0) += 1;

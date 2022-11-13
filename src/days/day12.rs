@@ -1,4 +1,5 @@
 use indexmap::IndexMap;
+use shash::SHash;
 
 use crate::aoc_base::Day;
 
@@ -6,7 +7,7 @@ pub struct Day12;
 
 #[derive(Debug, Clone)]
 pub struct Graph {
-    map: IndexMap<String, Vec<usize>>
+    map: IndexMap<String, Vec<usize>, SHash>
 }
 
 impl Graph {
@@ -46,7 +47,7 @@ impl Day for Day12 {
     }
 
     fn parse(input: &str) -> Self::Parsed {
-        let mut res = Graph { map: IndexMap::new() };
+        let mut res = Graph { map: IndexMap::default() };
 
         for ln in input.lines() {
             let mut ln = ln.split('-');
